@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="bs">
+
+<head>
+    <meta charset="UTF-8">
+    <title>TV Vaktija</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Amiri:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --green: #1e7f4f;
+            --green-light: #26a065;
+            --gold: #b8860b;
+            --bg: #f0f0f0;
+            --panel: #ffffff;
+            --border: #ddd;
+            --text: #1a1a1a;
+            --muted: #666;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: url('https://raw.githubusercontent.com/h-suzanj/Bi-er/main/ramadan_15_03_2022_1.jpg') center center / cover fixed;
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* ── LEFT PANEL ── */
+        .left {
+            width: 62%;
+            background: rgba(255, 255, 255, 0.72);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        /* Logo header */
+        .logo-area {
+            background: transparent;
+            padding: 18px 20px 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .logo-area svg {
+            height: 80px;
+            width: auto;
+            fill: var(--green);
+            flex-shrink: 0;
+        }
+
+        .logo-text-block {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .logo-text-block .line1 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--green);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .logo-text-block .line2 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--green);
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+        }
+
+        .logo-text-block .line3 {
+            font-size: 16px;
+            font-weight: 700;
+            font-style: italic;
+            color: #b8860b;
+            letter-spacing: 0.03em;
+            margin-top: 4px;
+        }
+
+        /* Clock section */
+        .clock-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px;
+            gap: 14px;
+        }
+
+        #clock {
+            font-size: 72px;
+            font-weight: 900;
+            color: var(--text);
+            letter-spacing: -2px;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Day of week pills */
+        .days-row {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .day-pill {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--muted);
+            background: transparent;
+            letter-spacing: 0;
+        }
+
+        .day-pill.active {
+            background: var(--green);
+            color: #fff;
+        }
+
+        /* Date row */
+        .date-row {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .date-box {
+            flex: 1;
+            max-width: 450px;
+            background: rgba(240, 240, 240, 0.60);
+            border-radius: 8px;
+            padding: 10px 14px;
+            text-align: center;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.10), 0 1px 4px rgba(0, 0, 0, 0.07);
+        }
+
+        .date-box .date-label {
+            font-size: 10px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 2px;
+        }
+
+        .date-box .date-val {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        .date-box .date-val.hijri {
+            font-size: 18px;
+            font-weight: 700;
+            color: #b8860b;
+        }
+
+        /* Next prayer */
+        .next-prayer {
+            width: 100%;
+            text-align: center;
+        }
+
+        .next-prayer .np-label {
+            font-size: 13px;
+            color: var(--muted);
+            font-style: italic;
+            margin-bottom: 2px;
+        }
+
+        #next-name {
+            font-size: 14px;
+            color: var(--green);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        #ikamet {
+            font-size: 52px;
+            font-weight: 900;
+            color: var(--gold);
+            letter-spacing: -1px;
+            font-variant-numeric: tabular-nums;
+            line-height: 1.1;
+        }
+
+        /* Footer */
+        .footer-bar {
+            background: var(--green);
+            padding: 14px 20px;
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+            text-align: center;
+            line-height: 1.5;
+            flex-shrink: 0;
+            border-radius: 8px;
+            max-width: 920px;
+            width: calc(100% - 40px);
+            margin: 0 auto 28px auto;
+        }
+
+        /* ── RIGHT PANEL ── */
+        .right {
+            width: 38%;
+            background: rgba(255, 255, 255, 0.72);
+            display: flex;
+            flex-direction: column;
+            padding: 28px 32px;
+        }
+
+        .panel-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--green);
+            margin-bottom: 16px;
+            flex-shrink: 0;
+        }
+
+        .panel-title::after {
+            content: '';
+            display: block;
+            width: 48px;
+            height: 2px;
+            background: var(--green);
+            margin: 8px auto 0;
+        }
+
+        #prayers {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.10), 0 1.5px 6px rgba(0, 0, 0, 0.07);
+            overflow: hidden;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid #e0e0e0;
+            position: relative;
+            flex: 1;
+            background: rgba(255, 255, 255, 0.65);
+            border-radius: 0;
+        }
+
+        .row:first-child {
+            border-radius: 10px 10px 0 0;
+        }
+
+        .row:last-child {
+            border-bottom: none;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .row.active {
+            background: rgba(232, 245, 238, 0.75);
+        }
+
+        .row.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--green);
+            border-radius: 4px 0 0 4px;
+        }
+
+        .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: transparent;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .row.active .dot {
+            background: var(--green);
+        }
+
+        .name {
+            width: 28%;
+            font-size: 20px;
+            font-weight: 600;
+            color: #999;
+        }
+
+        .row.active .name {
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        .time {
+            flex: 1;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--text);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .row.active .time {
+            color: var(--green);
+        }
+
+        .ar {
+            width: 28%;
+            text-align: right;
+            font-size: 22px;
+            font-family: 'Amiri', serif;
+            color: #bbb;
+            direction: rtl;
+        }
+
+        .row.active .ar {
+            color: var(--gold);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- LEFT -->
+        <div class="left">
+
+            <div class="logo-area">
+                <!-- IZ Logo SVG (crescent + text mark, green) -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 97 97">
+                    <path
+                        d="M70 36.81v-10l2.36 1.64.4-.21-3.27-6.59-4.28 2.22v15.88c0 2.2 0 3.34-.79 4.32v1.13A9.77 9.77 0 0070 36.81M63.67 51.58l-9.54-3.08 2.3-1.72-.08-.44-7.34 1 .81 4.73 15.23 4.94c2.11.68 3.2 1.05 3.9 2.09l1 .34a9.81 9.81 0 00-6.33-7.9M75.92 62.11l-5.91 8-.94-2.69-.45-.07-1.25 7.24 4.77.7c.47-.65 7.7-10.44 9.45-12.84 1.3-1.78 2-2.69 3.2-3l.66-.88a9.86 9.86 0 00-9.53 3.53M89.78 53.82l5.91 8.06h-2.88l-.2.4 6.56 3.42 2.15-4.28-9.4-12.82c-1.31-1.78-2-2.71-1.92-4l-.65-.89a9.73 9.73 0 00.43 10.07M86.14 38.2l9.56-3.06-.84 2.73.32.31 5.32-5.12-3.45-3.35c-.77.24-12.43 3.95-15.26 4.87-2.12.67-3.21 1-4.4.57l-1 .34a9.92 9.92 0 009.8 2.71" />
+                    <path
+                        d="M76.34 87.94A41.9 41.9 0 0121.5 48.51 41.9 41.9 0 0176.34 9.08v-.77A49 49 0 0049 0C21.92 0 0 21.72 0 48.5S21.92 97 49 97a49 49 0 0027.38-8.3z"
+                        fill-rule="evenodd" />
+                </svg>
+                <div class="logo-text-block">
+                    <div class="line1">Islamska zajednica u Bosni i Hercegovini</div>
+                    <div class="line2" id="medžlis-line">Medžlis Islamske zajednice Kakanj</div>
+                    <div class="line3" id="dzemat-line">Džemat Bičer - Ž. Stanica</div>
+                </div>
+            </div>
+
+            <div class="clock-section">
+                <div id="clock"></div>
+
+                <div class="days-row" id="days-row"></div>
+
+                <div class="date-row">
+                    <div class="date-box">
+                        <div class="date-val" id="date"></div>
+                    </div>
+                    <div class="date-box">
+                        <div class="date-val hijri" id="hijri"></div>
+                    </div>
+                </div>
+
+                <div class="next-prayer">
+                    <div class="np-label">Sljedeći namaz</div>
+                    <div id="next-name"></div>
+                    <div id="ikamet"></div>
+                </div>
+            </div>
+
+            <div class="footer-bar" id="footer-text">"Ko isposti ramazan i posti još šest dana u ševalu kao da je postio
+                cijelo vrijeme." (Muslim)</div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="right">
+            <div class="panel-title">Vrijeme Namaza</div>
+            <div id="prayers"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // names/arabic now include manual Sabah between Zora and Izlazak sunca
+        // Index mapping after fetch:
+        //   display[0] = Zora        → api[0]
+        //   display[1] = Sabah       → MANUAL (sabahTime)
+        //   display[2] = Izlazak sunca → api[1]
+        //   display[3] = Podne       → api[2]
+        //   display[4] = Ikindija    → api[3]
+        //   display[5] = Akšam       → api[4]
+        //   display[6] = Jacija      → api[5]
+        const names = ["Zora", "Sabah", "Izlazak sunca", "Podne", "Ikindija", "Akšam", "Jacija"];
+        const arabic = ["إمساك", "الفجر", "الشروق", "الظهر", "العصر", "المغرب", "العشاء"];
+        const SABAH_TIME = "05:00"; // manually set Sabah time
+        const dayLetters = ["N", "P", "U", "S", "Č", "P", "S"];
+        let vakatTimes = [];
+
+        const CACHE_KEY = 'vaktija_cache';
+
+        async function fetchVakat() {
+            try {
+                const res = await fetch("https://api.vaktija.ba/vaktija/v1/44");
+                const data = await res.json();
+                const api = data.vakat.slice(0, 6).map(t => {
+                    const [h, m] = t.split(":");
+                    return h.padStart(2, "0") + ":" + (m || "00").padStart(2, "0");
+                });
+                vakatTimes = [api[0], SABAH_TIME, api[1], api[2], api[3], api[4], api[5]];
+                if (data.lokacija) {
+                    document.getElementById("medžlis-line").innerText =
+                        "Medžlis Islamske zajednice " + data.lokacija;
+                }
+                // Save to cache with today's date
+                localStorage.setItem(CACHE_KEY, JSON.stringify({
+                    date: new Date().toDateString(),
+                    times: vakatTimes
+                }));
+                updateFooter();
+                render();
+            } catch (e) {
+                // Try to load from cache
+                try {
+                    const cached = JSON.parse(localStorage.getItem(CACHE_KEY));
+                    if (cached && cached.times) {
+                        vakatTimes = cached.times;
+                        const isStale = cached.date !== new Date().toDateString();
+                        console.warn(isStale ? "Using previous day cached times (no internet)" : "Using today's cached times (no internet)");
+                    } else {
+                        // No cache at all — use hardcoded fallback
+                        vakatTimes = ["05:10", SABAH_TIME, "08:14", "13:05", "16:22", "19:27", "21:00"];
+                    }
+                } catch (e2) {
+                    vakatTimes = ["05:10", SABAH_TIME, "08:14", "13:05", "16:22", "19:27", "21:00"];
+                }
+                updateFooter();
+                render();
+            }
+        }
+
+        function updateFooter() { // static
+        }
+
+        function render() {
+            if (!vakatTimes.length) return;
+            const now = new Date();
+            let activeIndex = -1;
+            vakatTimes.forEach((t, i) => {
+                const [h, m] = t.split(":");
+                const d = new Date(); d.setHours(+h, +m, 0);
+                if (now >= d) activeIndex = i;
+            });
+            document.getElementById("prayers").innerHTML = vakatTimes.map((t, i) => `
+            <div class="row ${i === activeIndex ? 'active' : ''}">
+                <div class="dot"></div>
+                <div class="name">${names[i]}</div>
+                <div class="time">${t}</div>
+                <div class="ar">${arabic[i]}</div>
+            </div>`).join('');
+        }
+
+        function buildDays() {
+            const now = new Date();
+            const today = now.getDay(); // 0=Sun
+            // Show Mon–Sun (1..7 mapped) like the image: P U S Č P S N
+            // Image shows: P(on) U(t) S(r) Č(et) P(et) S(ub) N(ed)
+            const order = [1, 2, 3, 4, 5, 6, 0]; // Mon..Sun
+            const labels = ["P", "U", "S", "Č", "P", "S", "N"];
+            const html = order.map((d, i) =>
+                `<div class="day-pill ${d === today ? 'active' : ''}">${labels[i]}</div>`
+            ).join('');
+            document.getElementById("days-row").innerHTML = html;
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const p = n => String(n).padStart(2, '0');
+            document.getElementById("clock").innerText =
+                `${p(now.getHours())}:${p(now.getMinutes())}:${p(now.getSeconds())}`;
+            // Gregorian: "22. mart 2026."
+            const months_bs = ["januar", "februar", "mart", "april", "maj", "juni", "juli", "august", "septembar", "oktobar", "novembar", "decembar"];
+            document.getElementById("date").innerText =
+                `${now.getDate()}. ${months_bs[now.getMonth()]} ${now.getFullYear()}.`;
+
+            // Hijri with Bosnian month names
+            const hijri_months = ["Muharem", "Safar", "Rebiu-l-evvel", "Rebiu-l-ahir", "Džumade-l-ula", "Džumade-l-uhra", "Redžeb", "Ša'ban", "Ramazan", "Ševval", "Zu-l-ka'de", "Zu-l-hidždže"];
+            try {
+                const hf = new Intl.DateTimeFormat('en-u-ca-islamic', { day: 'numeric', month: 'numeric', year: 'numeric' }).formatToParts(now);
+                const hDay = hf.find(p => p.type === 'day').value;
+                const hMon = parseInt(hf.find(p => p.type === 'month').value) - 1;
+                const hYear = hf.find(p => p.type === 'year').value;
+                document.getElementById("hijri").innerText =
+                    `${String(hDay).padStart(2, '0')}. ${hijri_months[hMon]} ${hYear}.`;
+            } catch (e) { }
+            buildDays();
+            updateIkamet();
+            render();
+        }
+
+        function updateIkamet() {
+            const now = new Date();
+            for (let i = 0; i < vakatTimes.length; i++) {
+                const [h, m] = vakatTimes[i].split(":");
+                const d = new Date(); d.setHours(+h, +m, 0, 0);
+                if (d > now) {
+                    const diff = d - now;
+                    const hrs = Math.floor(diff / 3600000);
+                    const mins = Math.floor((diff % 3600000) / 60000);
+                    const secs = Math.floor((diff % 60000) / 1000);
+                    document.getElementById("ikamet").innerText =
+                        `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                    document.getElementById("next-name").innerText = names[i];
+                    return;
+                }
+            }
+            // All prayers passed — count down to tomorrow's Zora (vakatTimes[0])
+            if (vakatTimes.length > 0) {
+                const [zh, zm] = vakatTimes[0].split(":");
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                tomorrow.setHours(+zh, +zm, 0, 0);
+                const diff = tomorrow - now;
+                const hrs = Math.floor(diff / 3600000);
+                const mins = Math.floor((diff % 3600000) / 60000);
+                const secs = Math.floor((diff % 60000) / 1000);
+                document.getElementById("ikamet").innerText =
+                    `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                document.getElementById("next-name").innerText = "Zora (sutra)";
+            }
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+        fetchVakat();
+        const _now = new Date();
+        const _ms = new Date(_now.getFullYear(), _now.getMonth(), _now.getDate() + 1) - _now;
+        setTimeout(() => { fetchVakat(); setInterval(fetchVakat, 86400000); }, _ms);
+    </script>
+
+</body>
+
+</html>
