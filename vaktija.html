@@ -403,7 +403,8 @@
                 </div>
             </div>
 
-            <div class="footer-bar" id="footer-text">"Ko isposti ramazan i posti još šest dana u ševvalu, kao da je postio cijelo vrijeme." (Muslim)</div>
+            <div class="footer-bar" id="footer-text">"Ko isposti ramazan i posti još šest dana u ševvalu, kao da je
+                postio cijelo vrijeme." (Muslim)</div>
         </div>
 
         <!-- RIGHT -->
@@ -517,7 +518,7 @@
                 `${now.getDate()}. ${months_bs[now.getMonth()]} ${now.getFullYear()}.`;
 
             // Hijri with Bosnian month names
-            const hijri_months = ["Muharem", "Safar", "Rebiu-l-evvel", "Rebiu-l-ahir", "Džumade-l-ula", "Džumade-l-uhra", "Redžeb", "Ša'ban", "Ramazan", "Ševval", "Zu-l-ka'de", "Zu-l-hidždže"];
+            const hijri_months = ["Muharrem", "Safer", "Rebiul-evvel", "Rebiul-ahir", "Džumadel-ula", "Džumadel-uhra", "Redžeb", "Ša'ban", "Ramazan", "Ševval", "Zul-ka'de", "Zul-hidždže"];
             try {
                 const hf = new Intl.DateTimeFormat('en-u-ca-islamic', { day: 'numeric', month: 'numeric', year: 'numeric' }).formatToParts(now);
                 const hDay = hf.find(p => p.type === 'day').value;
