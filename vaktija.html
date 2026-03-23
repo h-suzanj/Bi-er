@@ -19,16 +19,13 @@
 
         :root {
             --green: #1e7f4f;
-            --green-light: #26a065;
             --gold: #b8860b;
-            --bg: #f0f0f0;
-            --panel: #ffffff;
-            --border: #ddd;
             --text: #1a1a1a;
             --muted: #666;
         }
 
         body {
+            animation: antiBurn 20s infinite alternate;
             font-family: 'Cairo', sans-serif;
             background: url('https://raw.githubusercontent.com/h-suzanj/Bi-er/main/ramadan_15_03_2022_1.jpg') center center / cover fixed;
             color: var(--text);
@@ -36,12 +33,21 @@
             overflow: hidden;
         }
 
+        @keyframes antiBurn {
+            0% {
+                transform: translate(0px, 0px);
+            }
+
+            100% {
+                transform: translate(1px, 1px);
+            }
+        }
+
         .container {
             display: flex;
             height: 100vh;
         }
 
-        /* ── LEFT PANEL ── */
         .left {
             width: 62%;
             background: rgba(255, 255, 255, 0.72);
@@ -51,9 +57,7 @@
             z-index: 1;
         }
 
-        /* Logo header */
         .logo-area {
-            background: transparent;
             padding: 18px 20px 14px;
             display: flex;
             align-items: center;
@@ -98,12 +102,11 @@
             font-size: 16px;
             font-weight: 700;
             font-style: italic;
-            color: #b8860b;
+            color: var(--gold);
             letter-spacing: 0.03em;
             margin-top: 4px;
         }
 
-        /* Clock section */
         .clock-section {
             flex: 1;
             display: flex;
@@ -123,7 +126,41 @@
             font-variant-numeric: tabular-nums;
         }
 
-        /* Day of week pills */
+        /* Quick double-blink animation — fires once per minute */
+        @keyframes colonFlash {
+            0% {
+                opacity: 1;
+            }
+
+            15% {
+                opacity: 0;
+            }
+
+            30% {
+                opacity: 1;
+            }
+
+            45% {
+                opacity: 0;
+            }
+
+            60% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .clock-colon {
+            display: inline-block;
+        }
+
+        .clock-colon.flash {
+            animation: colonFlash 0.5s ease-in-out forwards;
+        }
+
         .days-row {
             display: flex;
             gap: 6px;
@@ -140,8 +177,6 @@
             font-size: 15px;
             font-weight: 700;
             color: var(--muted);
-            background: transparent;
-            letter-spacing: 0;
         }
 
         .day-pill.active {
@@ -149,7 +184,6 @@
             color: #fff;
         }
 
-        /* Date row */
         .date-row {
             display: flex;
             gap: 20px;
@@ -168,34 +202,22 @@
             box-shadow: 0 3px 12px rgba(0, 0, 0, 0.10), 0 1px 4px rgba(0, 0, 0, 0.07);
         }
 
-        .date-box .date-label {
-            font-size: 10px;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 2px;
-        }
-
-        .date-box .date-val {
+        .date-val {
             font-size: 18px;
             font-weight: 700;
             color: var(--green);
         }
 
-        .date-box .date-val.hijri {
-            font-size: 18px;
-            font-weight: 700;
-            color: #b8860b;
+        .date-val.hijri {
+            color: var(--gold);
         }
 
-        /* Next prayer */
         .next-prayer {
             width: 100%;
             text-align: center;
         }
 
         .next-prayer .np-label {
-            font-family: 'Cairo', sans-serif;
             font-size: 13px;
             color: var(--muted);
             font-style: italic;
@@ -213,7 +235,6 @@
         }
 
         .np-latin {
-            font-family: 'Cairo', sans-serif;
             font-size: 22px;
             font-weight: 900;
             color: var(--green);
@@ -221,9 +242,7 @@
         }
 
         .np-separator {
-            font-family: 'Cairo', sans-serif;
             font-size: 22px;
-            font-weight: 400;
             color: var(--muted);
         }
 
@@ -244,7 +263,6 @@
             line-height: 1.1;
         }
 
-        /* Footer */
         .footer-bar {
             background: var(--green);
             padding: 14px 20px;
@@ -258,9 +276,26 @@
             max-width: 920px;
             width: calc(100% - 40px);
             margin: 0 auto 28px auto;
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* ── RIGHT PANEL ── */
+        .footer-text-inner {
+            position: absolute;
+            width: 100%;
+            padding: 0 20px;
+            opacity: 1;
+            transition: opacity 0.8s ease;
+        }
+
+        .footer-text-inner.fade-out {
+            opacity: 0;
+        }
+
         .right {
             width: 38%;
             background: rgba(255, 255, 255, 0.72);
@@ -306,7 +341,6 @@
             position: relative;
             flex: 1;
             background: rgba(255, 255, 255, 0.65);
-            border-radius: 0;
         }
 
         .row:first-child {
@@ -337,7 +371,6 @@
             width: 7px;
             height: 7px;
             border-radius: 50%;
-            background: transparent;
             margin-right: 12px;
             flex-shrink: 0;
         }
@@ -383,16 +416,31 @@
         .row.active .ar {
             color: var(--gold);
         }
+
+        /* Debug bar — hidden unless DEBUG_SABAH = true */
+        #sabah-debug {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.82);
+            color: #0f0;
+            font-family: monospace;
+            font-size: 14px;
+            padding: 8px 16px;
+            z-index: 9999;
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
 
+    <div id="sabah-debug"></div>
+
     <div class="container">
-
-        <!-- LEFT -->
         <div class="left">
-
             <div class="logo-area">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 97 97">
                     <path
@@ -404,15 +452,13 @@
                 <div class="logo-text-block">
                     <div class="line1">Islamska zajednica u Bosni i Hercegovini</div>
                     <div class="line2" id="medžlis-line">Medžlis Islamske zajednice Kakanj</div>
-                    <div class="line3" id="dzemat-line">Džemat Bičer - Ž. Stanica</div>
+                    <div class="line3">Džemat Bičer - Ž. Stanica</div>
                 </div>
             </div>
 
             <div class="clock-section">
                 <div id="clock"></div>
-
                 <div class="days-row" id="days-row"></div>
-
                 <div class="date-row">
                     <div class="date-box">
                         <div class="date-val" id="date"></div>
@@ -421,7 +467,6 @@
                         <div class="date-val hijri" id="hijri"></div>
                     </div>
                 </div>
-
                 <div class="next-prayer">
                     <div class="np-label">Slijedi</div>
                     <div class="np-name-row">
@@ -433,33 +478,103 @@
                 </div>
             </div>
 
-            <div class="footer-bar" id="footer-text">"Ko isposti ramazan i posti još šest dana u ševvalu, kao da je
-                postio cijelo vrijeme." (Muslim)</div>
+            <div class="footer-bar">
+                <div class="footer-text-inner" id="footer-text"></div>
+            </div>
         </div>
 
-        <!-- RIGHT -->
         <div class="right">
             <div class="panel-title">Vrijeme Namaza</div>
             <div id="prayers"></div>
         </div>
-
     </div>
 
     <script>
+        // ── FOOTER TEXTS (24 entries, index = hour 0–23) ──────────────────────────
+        const FOOTER_TEXTS = [
+    /* 00 */ '"Ko isposti ramazan i posti još šest dana u ševvalu, kao da je postio cijelo vrijeme." (Muslim)',
+    /* 01 */ '"Allahov Poslanik, s.a.v.s., rekao je: Namaz je stub vjere." (Bejheki)',
+    /* 02 */ '"Čistoća je polovina vjere." (Muslim)',
+    /* 03 */ '"Najdraži posao Allahu je onaj koji se redovno obavlja, makar bio i mali." (Buhari, Muslim)',
+    /* 04 */ '"Ko uči Kur\'an i postupa prema njemu, roditeljima mu se na Sudnjem danu daje kruna svjetlosti." (Ebu Davud)',
+    /* 05 */ '"Allahu, ti si Mir, od tebe dolazi mir, tebi se vraća mir." (Muslim)',
+    /* 06 */ '"Jutarnji namaz je bolji od dunjaluka i svega na njemu." (Tirmizi)',
+    /* 07 */ '"Osmijeh u lice brata tvoga sadaka je." (Tirmizi)',
+    /* 08 */ '"Koji god musliman zasadi biljku ili posije sjeme, pa od toga čovjek, ptica ili životinja pojede – to je za njega sadaka." (Buhari)',
+    /* 09 */ '"Tražite znanje od kolevke do groba." (predaja)',
+    /* 10 */ '"Ne budite zavidni jedan drugome, ne mrzite se, ne okrećite se leđima jedni drugima – budite pravi Allahovi robovi i braća." (Buhari)',
+    /* 11 */ '"Allahu moj, pomozi mi da Te se sjećam, da Ti zahvaljujem i da Te lijepo obožavam." (Ebu Davud)',
+    /* 12 */ '"Gospodar vaš kaže: Pozovite Me, Ja ću vam se odazvati." (Kur\'an, 40:60)',
+    /* 13 */ '"Doista, Allah je lijep i voli ljepotu." (Muslim)',
+    /* 14 */ '"Vjernik ne može biti sit dok mu susjed gladuje." (Hakim)',
+    /* 15 */ '"Ko se pouzdao u Allaha – On mu je dovoljan." (Kur\'an, 65:3)',
+    /* 16 */ '"Najboljim se smatrajte prema ženama." (Buhari, Muslim)',
+    /* 17 */ '"Allahu nije drag onaj ko ne voli bližnje." (Buhari, Muslim)',
+    /* 18 */ '"Ko klanja akšam – zaštićen je Allahovim zaštitom te noći." (Taberani)',
+    /* 19 */ '"Dova je suština ibadeta." (Tirmizi)',
+    /* 20 */ '"Allahu moj, uljepšaj mi moj moral kao što si mi uljepšao izgled." (Ahmed)',
+    /* 21 */ '"Ko prouči Ajetu-l-kursijju poslije farz-namaza, između njega i dženneta stoji samo smrt." (Nesai)',
+    /* 22 */ '"Subhanallahi ve bihamdihi – sto puta dnevno briše grijehe makar ih bilo koliko morske pjene." (Buhari, Muslim)',
+    /* 23 */ '"Allahov Poslanik, s.a.v.s., klanjao je noćni namaz sve dok mu noge nisu otekle." (Buhari)',
+        ];
+
+        // ── DEBUG ─────────────────────────────────────────────────────────────────
+        // DEBUG_SABAH = true  →  shows green bar at bottom with full calculation.
+        // DEBUG_IZLAZAK_OVERRIDE = "HH:MM"  →  pretend Izlazak is this time to test
+        // threshold switching without waiting for a real date change.
+        // When done testing, set both back to false / null.
+        const DEBUG_SABAH = false;
+        const DEBUG_IZLAZAK_OVERRIDE = null; // e.g. "05:15"  "05:30"  "06:10"
+
+        // ── PRAYER NAMES ─────────────────────────────────────────────────────────
         const names = ["Zora", "Sabah", "Izlazak sunca", "Podne", "Ikindija", "Akšam", "Jacija"];
         const arabic = ["إمساك", "الفجر", "الشروق", "الظهر", "العصر", "المغرب", "العشاء"];
-
-        // Prayers that do NOT get "- NAMAZ" suffix
-        const NO_NAMAZ_SUFFIX = new Set(["Zora", "Izlazak sunca"]);
-
-        const SABAH_TIME = "05:00";
-        let vakatTimes = [];
+        const NO_NAMAZ = new Set(["Zora", "Izlazak sunca"]);
+        const getDisplayName = n => NO_NAMAZ.has(n) ? n.toUpperCase() : n.toUpperCase() + " - NAMAZ";
 
         const CACHE_KEY = 'vaktija_cache';
+        let vakatTimes = [];
+        let izlazakRaw = '';
 
-        function getDisplayName(name) {
-            const upper = name.toUpperCase();
-            return NO_NAMAZ_SUFFIX.has(name) ? upper : upper + " - NAMAZ";
+        // ── DYNAMIC SABAH ─────────────────────────────────────────────────────────
+        // Gap = Izlazak − Zora (minutes)
+        //  < 30  → offset 30 min before Izlazak
+        // 30–44  → offset 40 min (default)
+        //  ≥ 45  → offset 45 min
+        function computeSabah(zoraStr, izlazakStr) {
+            const toM = s => { const [h, m] = s.split(':'); return +h * 60 + (+m); };
+            const toT = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+
+            const iz = toM(izlazakStr);
+            let sab = toM(zoraStr);
+
+            let diff = iz - sab;
+
+            // ✅ nova logika (30–45 min dozvoljeno)
+            if (!(diff >= 30 && diff <= 45)) {
+                sab = iz - 45;
+            }
+
+            // ✅ rounding na 15 min
+            sab = Math.round(sab / 15) * 15;
+
+            // ✅ finalni diff za debug
+            diff = iz - sab;
+
+            const result = toT(sab);
+
+            if (DEBUG_SABAH) {
+                const dbg = document.getElementById('sabah-debug');
+                dbg.style.display = 'block';
+
+                const sabahStr = toT(sab);
+
+                dbg.textContent =
+                    `[SABAH DEBUG] Zora: ${zoraStr} | Izlazak: ${izlazakStr} | ` +
+                    `Račun: ${izlazakStr} - ${sabahStr} = ${diff} min → Sabah: ${result}`;
+            }
+
+            return result;
         }
 
         async function fetchVakat() {
@@ -467,29 +582,25 @@
                 const res = await fetch("https://api.vaktija.ba/vaktija/v1/44");
                 const data = await res.json();
                 const api = data.vakat.slice(0, 6).map(t => {
-                    const [h, m] = t.split(":");
-                    return h.padStart(2, "0") + ":" + (m || "00").padStart(2, "0");
+                    const [h, m] = t.split(':');
+                    return h.padStart(2, '0') + ':' + (m || '00').padStart(2, '0');
                 });
-                vakatTimes = [api[0], SABAH_TIME, api[1], api[2], api[3], api[4], api[5]];
-                if (data.lokacija) {
-                    document.getElementById("medžlis-line").innerText =
-                        "Medžlis Islamske zajednice " + data.lokacija;
-                }
-                localStorage.setItem(CACHE_KEY, JSON.stringify({
-                    date: new Date().toDateString(),
-                    times: vakatTimes
-                }));
+                const zoraStr = api[0];
+                izlazakRaw = api[1];
+                const sabah = computeSabah(zoraStr, DEBUG_IZLAZAK_OVERRIDE || izlazakRaw);
+                vakatTimes = [zoraStr, sabah, izlazakRaw, api[2], api[3], api[4], api[5]];
+                if (data.lokacija)
+                    document.getElementById('medžlis-line').innerText = 'Medžlis Islamske zajednice ' + data.lokacija;
+                localStorage.setItem(CACHE_KEY, JSON.stringify({ date: new Date().toDateString(), times: vakatTimes, izlazak: izlazakRaw }));
                 render();
             } catch (e) {
                 try {
-                    const cached = JSON.parse(localStorage.getItem(CACHE_KEY));
-                    if (cached && cached.times) {
-                        vakatTimes = cached.times;
-                    } else {
-                        vakatTimes = ["05:10", SABAH_TIME, "08:14", "13:05", "16:22", "19:27", "21:00"];
-                    }
+                    const c = JSON.parse(localStorage.getItem(CACHE_KEY));
+                    vakatTimes = c && c.times ? c.times : ["04:50", "05:10", "06:30", "13:05", "16:22", "19:27", "21:00"];
+                    izlazakRaw = (c && c.izlazak) || "06:30";
                 } catch (e2) {
-                    vakatTimes = ["05:10", SABAH_TIME, "08:14", "13:05", "16:22", "19:27", "21:00"];
+                    vakatTimes = ["04:50", "05:10", "06:30", "13:05", "16:22", "19:27", "21:00"];
+                    izlazakRaw = "06:30";
                 }
                 render();
             }
@@ -497,101 +608,100 @@
 
         function render() {
             if (!vakatTimes.length) return;
-            const now = new Date();
-            let activeIndex = -1;
-            vakatTimes.forEach((t, i) => {
-                const [h, m] = t.split(":");
-                const d = new Date(); d.setHours(+h, +m, 0);
-                if (now >= d) activeIndex = i;
-            });
-            document.getElementById("prayers").innerHTML = vakatTimes.map((t, i) => `
-            <div class="row ${i === activeIndex ? 'active' : ''}">
-                <div class="dot"></div>
-                <div class="name">${names[i]}</div>
-                <div class="time">${t}</div>
-                <div class="ar">${arabic[i]}</div>
-            </div>`).join('');
+            const now = new Date(); let ai = -1;
+            vakatTimes.forEach((t, i) => { const [h, m] = t.split(':'), d = new Date(); d.setHours(+h, +m, 0); if (now >= d) ai = i; });
+            document.getElementById('prayers').innerHTML = vakatTimes.map((t, i) => `
+        <div class="row ${i === ai ? 'active' : ''}">
+            <div class="dot"></div>
+            <div class="name">${names[i]}</div>
+            <div class="time">${t}</div>
+            <div class="ar">${arabic[i]}</div>
+        </div>`).join('');
         }
 
-        function buildDays() {
-            const now = new Date();
-            const today = now.getDay();
-            const order = [1, 2, 3, 4, 5, 6, 0];
-            const labels = ["P", "U", "S", "Č", "P", "S", "N"];
-            document.getElementById("days-row").innerHTML = order.map((d, i) =>
-                `<div class="day-pill ${d === today ? 'active' : ''}">${labels[i]}</div>`
-            ).join('');
+        // ── CLOCK + ANTI-SLEEP BLINK ───────────────────────────────────────────────
+        // Colons do a quick double-blink (≈0.5 s) once every minute at :00 seconds.
+        let lastFlashMin = -1;
+
+        function flash() {
+            document.querySelectorAll('.clock-colon').forEach(el => {
+                el.classList.remove('flash');
+                void el.offsetWidth;       // restart animation
+                el.classList.add('flash');
+            });
         }
 
         function updateClock() {
-            const now = new Date();
-            const p = n => String(n).padStart(2, '0');
-            document.getElementById("clock").innerText =
-                `${p(now.getHours())}:${p(now.getMinutes())}:${p(now.getSeconds())}`;
+            const now = new Date(), p = n => String(n).padStart(2, '0');
+            if (now.getSeconds() === 0 && now.getMinutes() !== lastFlashMin) {
+                lastFlashMin = now.getMinutes();
+                flash();
+            }
+            const c = `<span class="clock-colon">:</span>`;
+            document.getElementById('clock').innerHTML = `${p(now.getHours())}${c}${p(now.getMinutes())}${c}${p(now.getSeconds())}`;
 
-            const months_bs = ["januar", "februar", "mart", "april", "maj", "juni", "juli", "august", "septembar", "oktobar", "novembar", "decembar"];
-            document.getElementById("date").innerText =
-                `${now.getDate()}. ${months_bs[now.getMonth()]} ${now.getFullYear()}.`;
+            const mo = ["januar", "februar", "mart", "april", "maj", "juni", "juli", "august", "septembar", "oktobar", "novembar", "decembar"];
+            document.getElementById('date').innerText = `${now.getDate()}. ${mo[now.getMonth()]} ${now.getFullYear()}.`;
 
-            const hijri_months = ["Muharrem", "Safer", "Rebiul-evvel", "Rebiul-ahir", "Džumadel-ula", "Džumadel-uhra", "Redžeb", "Ša'ban", "Ramazan", "Ševval", "Zul-ka'de", "Zul-hidždže"];
+            const hm = ["Muharrem", "Safer", "Rebiul-evvel", "Rebiul-ahir", "Džumadel-ula", "Džumadel-uhra", "Redžeb", "Ša'ban", "Ramazan", "Ševval", "Zul-ka'de", "Zul-hidždže"];
             try {
                 const hf = new Intl.DateTimeFormat('en-u-ca-islamic', { day: 'numeric', month: 'numeric', year: 'numeric' }).formatToParts(now);
-                const hDay = hf.find(p => p.type === 'day').value;
-                const hMon = parseInt(hf.find(p => p.type === 'month').value) - 1;
-                const hYear = hf.find(p => p.type === 'year').value;
-                document.getElementById("hijri").innerText =
-                    `${String(hDay).padStart(2, '0')}. ${hijri_months[hMon]} ${hYear}.`;
+                const hd = hf.find(x => x.type === 'day').value, hmon = parseInt(hf.find(x => x.type === 'month').value) - 1, hy = hf.find(x => x.type === 'year').value;
+                document.getElementById('hijri').innerText = `${String(hd).padStart(2, '0')}. ${hm[hmon]} ${hy}.`;
             } catch (e) { }
 
-            buildDays();
-            updateIkamet();
-            render();
+            buildDays(); updateIkamet(); render();
+        }
+
+        function buildDays() {
+            const today = [1, 2, 3, 4, 5, 6, 0], d = new Date().getDay(), lb = ["P", "U", "S", "Č", "P", "S", "N"];
+            document.getElementById('days-row').innerHTML = today.map((x, i) => `<div class="day-pill ${x === d ? 'active' : ''}">${lb[i]}</div>`).join('');
         }
 
         function updateIkamet() {
             const now = new Date();
             for (let i = 0; i < vakatTimes.length; i++) {
-                const [h, m] = vakatTimes[i].split(":");
-                const d = new Date(); d.setHours(+h, +m, 0, 0);
+                const [h, m] = vakatTimes[i].split(':'), d = new Date(); d.setHours(+h, +m, 0, 0);
                 if (d > now) {
-                    const diff = d - now;
-                    const hrs = Math.floor(diff / 3600000);
-                    const mins = Math.floor((diff % 3600000) / 60000);
-                    const secs = Math.floor((diff % 60000) / 1000);
-                    document.getElementById("ikamet").innerText =
-                        `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-                    document.getElementById("next-latin").innerText = getDisplayName(names[i]);
-                    document.getElementById("next-sep").innerText = "|";
-                    document.getElementById("next-arabic").innerText = arabic[i];
+                    const diff = d - now, hr = Math.floor(diff / 3600000), mn = Math.floor((diff % 3600000) / 60000), sc = Math.floor((diff % 60000) / 1000);
+                    document.getElementById('ikamet').innerText = `${String(hr).padStart(2, '0')}:${String(mn).padStart(2, '0')}:${String(sc).padStart(2, '0')}`;
+                    document.getElementById('next-latin').innerText = getDisplayName(names[i]);
+                    document.getElementById('next-sep').innerText = '|';
+                    document.getElementById('next-arabic').innerText = arabic[i];
                     return;
                 }
             }
-            // All prayers passed — count down to tomorrow's Zora
             if (vakatTimes.length > 0) {
-                const [zh, zm] = vakatTimes[0].split(":");
-                const tomorrow = new Date();
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                tomorrow.setHours(+zh, +zm, 0, 0);
-                const diff = tomorrow - now;
-                const hrs = Math.floor(diff / 3600000);
-                const mins = Math.floor((diff % 3600000) / 60000);
-                const secs = Math.floor((diff % 60000) / 1000);
-                document.getElementById("ikamet").innerText =
-                    `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-                document.getElementById("next-latin").innerText = "ZORA";
-                document.getElementById("next-sep").innerText = "|";
-                document.getElementById("next-arabic").innerText = arabic[0];
+                const [zh, zm] = vakatTimes[0].split(':'), t = new Date(); t.setDate(t.getDate() + 1); t.setHours(+zh, +zm, 0, 0);
+                const diff = t - now, hr = Math.floor(diff / 3600000), mn = Math.floor((diff % 3600000) / 60000), sc = Math.floor((diff % 60000) / 1000);
+                document.getElementById('ikamet').innerText = `${String(hr).padStart(2, '0')}:${String(mn).padStart(2, '0')}:${String(sc).padStart(2, '0')}`;
+                document.getElementById('next-latin').innerText = 'ZORA';
+                document.getElementById('next-sep').innerText = '|';
+                document.getElementById('next-arabic').innerText = arabic[0];
             }
         }
 
+        // ── DYNAMIC FOOTER ─────────────────────────────────────────────────────────
+        let curFooterHour = -1;
+        function updateFooter() {
+            const h = new Date().getHours();
+            if (h === curFooterHour) return;
+            curFooterHour = h;
+            const el = document.getElementById('footer-text');
+            el.classList.add('fade-out');
+            setTimeout(() => { el.innerText = FOOTER_TEXTS[h % FOOTER_TEXTS.length]; el.classList.remove('fade-out'); }, 850);
+        }
+
+        // ── INIT ───────────────────────────────────────────────────────────────────
+        (() => { const h = new Date().getHours(); document.getElementById('footer-text').innerText = FOOTER_TEXTS[h % FOOTER_TEXTS.length]; curFooterHour = h; })();
+
         setInterval(updateClock, 1000);
+        setInterval(updateFooter, 10000);
         updateClock();
         fetchVakat();
-        const _now = new Date();
-        const _ms = new Date(_now.getFullYear(), _now.getMonth(), _now.getDate() + 1) - _now;
+        const _n = new Date(), _ms = new Date(_n.getFullYear(), _n.getMonth(), _n.getDate() + 1) - _n;
         setTimeout(() => { fetchVakat(); setInterval(fetchVakat, 86400000); }, _ms);
     </script>
-
 </body>
 
 </html>
