@@ -126,7 +126,6 @@
             font-variant-numeric: tabular-nums;
         }
 
-        /* Quick double-blink animation — fires once per minute */
         @keyframes colonFlash {
             0% {
                 opacity: 1;
@@ -417,7 +416,6 @@
             color: var(--gold);
         }
 
-        /* Debug bar — hidden unless DEBUG_SABAH = true */
         #sabah-debug {
             display: none;
             position: fixed;
@@ -432,10 +430,37 @@
             z-index: 9999;
             text-align: center;
         }
+
+        /* ── KEEPALIVE VIDEO — invisible, 0 size, no interaction ── */
+        #tv-keepalive {
+            position: fixed;
+            width: 1px;
+            height: 1px;
+            top: 0;
+            left: 0;
+            opacity: 0.01;
+            /* NOT 0 — some browsers skip rendering at exactly 0 */
+            pointer-events: none;
+            z-index: -9999;
+        }
     </style>
 </head>
 
 <body>
+
+    <!--
+        ══════════════════════════════════════════════════════════
+        SCREENSAVER PREVENTION VIDEO
+        Real MP4: no audio, 1080p, ~2MB, H.264 baseline, faststart.
+        webOS suppresses "Ekran isključen" whenever a video element
+        is actively playing — even if it is invisible.
+        faststart moves the moov atom to the front so playback
+        begins before the full file is downloaded.
+        Both this HTML and keepalive.mp4 must be in the same folder
+        (or same GitHub repo root) for the src path to resolve.
+        ══════════════════════════════════════════════════════════
+    -->
+    <video id="tv-keepalive" src="keepalive.mp4" autoplay muted loop playsinline></video>
 
     <div id="sabah-debug"></div>
 
@@ -490,7 +515,31 @@
     </div>
 
     <script>
-        // ── FOOTER TEXTS (24 entries, index = hour 0–23) ──────────────────────────
+        // ══════════════════════════════════════════════════════════════════════════
+        //  SCREENSAVER KILLER
+        //  keepalive.mp4 is a real 1080p silent looping video (no audio track).
+        //  webOS treats any actively-playing <video> as "media activity" and
+        //  suppresses the system screensaver / "Ekran isključen" feature.
+        //  The video is 1×1 px and opacity 0.01 — completely invisible to viewers.
+        // ══════════════════════════════════════════════════════════════════════════
+        (function startKeepAlive() {
+            var video = document.getElementById('tv-keepalive');
+            video.play().catch(function (e) {
+                // Autoplay blocked — retry on first user interaction (tap/click)
+                console.warn('[keepalive] autoplay blocked, waiting for interaction:', e);
+                var retry = function () {
+                    video.play().catch(function () { });
+                    document.removeEventListener('click', retry);
+                    document.removeEventListener('touchstart', retry);
+                };
+                document.addEventListener('click', retry);
+                document.addEventListener('touchstart', retry);
+            });
+        })();
+
+        // ══════════════════════════════════════════════════════════════════════════
+        //  FOOTER TEXTS (index = hour 0–23)
+        // ══════════════════════════════════════════════════════════════════════════
         const FOOTER_TEXTS = [
     /* 00 */ '"Ko isposti ramazan i posti još šest dana u ševvalu, kao da je postio cijelo vrijeme." (Muslim)',
     /* 01 */ '"Allahov Poslanik, s.a.v.s., rekao je: Namaz je stub vjere." (Bejheki)',
@@ -518,15 +567,11 @@
     /* 23 */ '"Allahov Poslanik, s.a.v.s., klanjao je noćni namaz sve dok mu noge nisu otekle." (Buhari)',
         ];
 
-        // ── DEBUG ─────────────────────────────────────────────────────────────────
-        // DEBUG_SABAH = true  →  shows green bar at bottom with full calculation.
-        // DEBUG_IZLAZAK_OVERRIDE = "HH:MM"  →  pretend Izlazak is this time to test
-        // threshold switching without waiting for a real date change.
-        // When done testing, set both back to false / null.
+        // ── DEBUG ──────────────────────────────────────────────────────────────────
         const DEBUG_SABAH = false;
-        const DEBUG_IZLAZAK_OVERRIDE = null; // e.g. "05:15"  "05:30"  "06:10"
+        const DEBUG_IZLAZAK_OVERRIDE = null;
 
-        // ── PRAYER NAMES ─────────────────────────────────────────────────────────
+        // ── PRAYER NAMES ───────────────────────────────────────────────────────────
         const names = ["Zora", "Sabah", "Izlazak sunca", "Podne", "Ikindija", "Akšam", "Jacija"];
         const arabic = ["إمساك", "الفجر", "الشروق", "الظهر", "العصر", "المغرب", "العشاء"];
         const NO_NAMAZ = new Set(["Zora", "Izlazak sunca"]);
@@ -536,44 +581,22 @@
         let vakatTimes = [];
         let izlazakRaw = '';
 
-        // ── DYNAMIC SABAH ─────────────────────────────────────────────────────────
-        // Gap = Izlazak − Zora (minutes)
-        //  < 30  → offset 30 min before Izlazak
-        // 30–44  → offset 40 min (default)
-        //  ≥ 45  → offset 45 min
+        // ── DYNAMIC SABAH ──────────────────────────────────────────────────────────
         function computeSabah(zoraStr, izlazakStr) {
             const toM = s => { const [h, m] = s.split(':'); return +h * 60 + (+m); };
             const toT = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
-
             const iz = toM(izlazakStr);
             let sab = toM(zoraStr);
-
             let diff = iz - sab;
-
-            // ✅ nova logika (30–45 min dozvoljeno)
-            if (!(diff >= 30 && diff <= 45)) {
-                sab = iz - 45;
-            }
-
-            // ✅ rounding na 15 min
+            if (!(diff >= 30 && diff <= 45)) { sab = iz - 45; }
             sab = Math.round(sab / 15) * 15;
-
-            // ✅ finalni diff za debug
             diff = iz - sab;
-
             const result = toT(sab);
-
             if (DEBUG_SABAH) {
                 const dbg = document.getElementById('sabah-debug');
                 dbg.style.display = 'block';
-
-                const sabahStr = toT(sab);
-
-                dbg.textContent =
-                    `[SABAH DEBUG] Zora: ${zoraStr} | Izlazak: ${izlazakStr} | ` +
-                    `Račun: ${izlazakStr} - ${sabahStr} = ${diff} min → Sabah: ${result}`;
+                dbg.textContent = `[SABAH DEBUG] Zora: ${zoraStr} | Izlazak: ${izlazakStr} | Račun: ${izlazakStr} - ${toT(sab)} = ${diff} min → Sabah: ${result}`;
             }
-
             return result;
         }
 
@@ -619,14 +642,13 @@
         </div>`).join('');
         }
 
-        // ── CLOCK + ANTI-SLEEP BLINK ───────────────────────────────────────────────
-        // Colons do a quick double-blink (≈0.5 s) once every minute at :00 seconds.
+        // ── CLOCK ──────────────────────────────────────────────────────────────────
         let lastFlashMin = -1;
 
         function flash() {
             document.querySelectorAll('.clock-colon').forEach(el => {
                 el.classList.remove('flash');
-                void el.offsetWidth;       // restart animation
+                void el.offsetWidth;
                 el.classList.add('flash');
             });
         }
@@ -693,12 +715,17 @@
         }
 
         // ── INIT ───────────────────────────────────────────────────────────────────
-        (() => { const h = new Date().getHours(); document.getElementById('footer-text').innerText = FOOTER_TEXTS[h % FOOTER_TEXTS.length]; curFooterHour = h; })();
+        (() => {
+            const h = new Date().getHours();
+            document.getElementById('footer-text').innerText = FOOTER_TEXTS[h % FOOTER_TEXTS.length];
+            curFooterHour = h;
+        })();
 
         setInterval(updateClock, 1000);
         setInterval(updateFooter, 10000);
         updateClock();
         fetchVakat();
+
         const _n = new Date(), _ms = new Date(_n.getFullYear(), _n.getMonth(), _n.getDate() + 1) - _n;
         setTimeout(() => { fetchVakat(); setInterval(fetchVakat, 86400000); }, _ms);
 
