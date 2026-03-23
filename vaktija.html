@@ -701,6 +701,11 @@
         fetchVakat();
         const _n = new Date(), _ms = new Date(_n.getFullYear(), _n.getMonth(), _n.getDate() + 1) - _n;
         setTimeout(() => { fetchVakat(); setInterval(fetchVakat, 86400000); }, _ms);
+
+        setInterval(() => {
+            document.body.style.transform = "translate(" + Math.random() + "px," + Math.random() + "px)";
+            window.dispatchEvent(new Event('mousemove'));
+        }, 15000);
     </script>
 </body>
 
