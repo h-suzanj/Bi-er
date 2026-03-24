@@ -544,37 +544,62 @@
         }
 
         // ── DATA FETCH ────────────────────────────────────────────────────────────
+        // Hardcoded fallback — approximate times for this location.
+        // Used only when API fails AND localStorage is empty.
+        const FALLBACK_TIMES = ["04:04", "05:00", "05:37", "11:54", "15:22", "18:11", "19:45"];
+        const FALLBACK_IZLAZAK = "05:37";
+
+        function applyTimes(zora, izlazak, podne, ikindija, aksam, jacija) {
+            izlazakRaw = izlazak;
+            const sabah = computeSabah(izlazakRaw);
+            vakatTimes = [zora, sabah, izlazak, podne, ikindija, aksam, jacija];
+            render();
+        }
+
+        let fetchRetryTimer = null;
+
         async function fetchVakat() {
             try {
                 const res = await fetch("https://api.vaktija.ba/vaktija/v1/44");
+                if (!res.ok) throw new Error("HTTP " + res.status);
                 const data = await res.json();
                 const api = data.vakat.slice(0, 6).map(t => {
                     const [h, m] = t.split(':');
                     return h.padStart(2, '0') + ':' + (m || '00').padStart(2, '0');
                 });
-                const zoraStr = api[0];
-                izlazakRaw = api[1];
-                const sabah = computeSabah(izlazakRaw);
-                vakatTimes = [zoraStr, sabah, izlazakRaw, api[2], api[3], api[4], api[5]];
+                // Clear any pending retry
+                if (fetchRetryTimer) { clearTimeout(fetchRetryTimer); fetchRetryTimer = null; }
                 if (data.lokacija)
                     document.getElementById('medžlis-line').innerText = 'Medžlis Islamske zajednice ' + data.lokacija;
+                applyTimes(api[0], api[1], api[2], api[3], api[4], api[5]);
                 localStorage.setItem(CACHE_KEY, JSON.stringify({ date: new Date().toDateString(), times: vakatTimes, izlazak: izlazakRaw }));
-                render();
             } catch (e) {
+                // API failed — try localStorage cache first
+                let loaded = false;
                 try {
                     const c = JSON.parse(localStorage.getItem(CACHE_KEY));
-                    izlazakRaw = (c && c.izlazak) || "06:30";
-                    if (c && c.times) {
-                        const sabah = computeSabah(izlazakRaw);
-                        vakatTimes = [c.times[0], sabah, c.times[2], c.times[3], c.times[4], c.times[5], c.times[6]];
-                    } else {
-                        vakatTimes = ["04:50", "05:00", "06:30", "13:05", "16:22", "19:27", "21:00"];
+                    if (c && c.times && c.times.length === 7) {
+                        applyTimes(c.times[0], c.izlazak, c.times[3], c.times[4], c.times[5], c.times[6]);
+                        loaded = true;
                     }
-                } catch (e2) {
-                    vakatTimes = ["04:50", "05:10", "06:30", "13:05", "16:22", "19:27", "21:00"];
-                    izlazakRaw = "06:30";
+                } catch (e2) { }
+
+                // Nothing in cache — use hardcoded fallback so panel is never blank
+                if (!loaded) {
+                    applyTimes(
+                        FALLBACK_TIMES[0], FALLBACK_IZLAZAK,
+                        FALLBACK_TIMES[3], FALLBACK_TIMES[4],
+                        FALLBACK_TIMES[5], FALLBACK_TIMES[6]
+                    );
                 }
-                render();
+
+                // Retry API every 2 minutes until it succeeds
+                if (!fetchRetryTimer) {
+                    fetchRetryTimer = setTimeout(function retry() {
+                        fetchRetryTimer = null;
+                        fetchVakat();
+                    }, 2 * 60 * 1000);
+                }
             }
         }
 
@@ -586,6 +611,8 @@
                 d.setHours(+h, +m, 0);
                 if (now >= d) ai = i;
             });
+            // Before Zora (midnight → Zora): highlight last prayer (Jacija) from previous day
+            if (ai === -1) ai = vakatTimes.length - 1;
             document.getElementById('prayers').innerHTML = vakatTimes.map((t, i) => `
         <div class="row ${i === ai ? 'active' : ''}">
             <div class="dot"></div>
