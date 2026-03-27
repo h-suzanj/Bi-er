@@ -471,32 +471,57 @@
     </div>
 
     <script>
-        // ── FOOTER TEXTS (index = hour 0–23) ──────────────────────────────────────
+        // ── FOOTER TEXTS — rotates every 10s, cycles through all entries ──────────
         const FOOTER_TEXTS = [
-    /* 00 */ '"Ko isposti ramazan i posti još šest dana u ševvalu, kao da je postio cijelo vrijeme." (Muslim)',
-    /* 01 */ '"Allahov Poslanik, s.a.v.s., rekao je: Namaz je stub vjere." (Bejheki)',
-    /* 02 */ '"Čistoća je polovina vjere." (Muslim)',
-    /* 03 */ '"Najdraži posao Allahu je onaj koji se redovno obavlja, makar bio i mali." (Buhari, Muslim)',
-    /* 04 */ '"Ko uči Kur\'an i postupa prema njemu, roditeljima mu se na Sudnjem danu daje kruna svjetlosti." (Ebu Davud)',
-    /* 05 */ '"Allahu, ti si Mir, od tebe dolazi mir, tebi se vraća mir." (Muslim)',
-    /* 06 */ '"Jutarnji namaz je bolji od dunjaluka i svega na njemu." (Tirmizi)',
-    /* 07 */ '"Osmijeh u lice brata tvoga sadaka je." (Tirmizi)',
-    /* 08 */ '"Koji god musliman zasadi biljku ili posije sjeme, pa od toga čovjek, ptica ili životinja pojede – to je za njega sadaka." (Buhari)',
-    /* 09 */ '"Tražite znanje od kolevke do groba." (predaja)',
-    /* 10 */ '"Ne budite zavidni jedan drugome, ne mrzite se, ne okrećite se leđima jedni drugima – budite pravi Allahovi robovi i braća." (Buhari)',
-    /* 11 */ '"Allahu moj, pomozi mi da Te se sjećam, da Ti zahvaljujem i da Te lijepo obožavam." (Ebu Davud)',
-    /* 12 */ '"Gospodar vaš kaže: Pozovite Me, Ja ću vam se odazvati." (Kur\'an, 40:60)',
-    /* 13 */ '"Doista, Allah je lijep i voli ljepotu." (Muslim)',
-    /* 14 */ '"Vjernik ne može biti sit dok mu susjed gladuje." (Hakim)',
-    /* 15 */ '"Ko se pouzdao u Allaha – On mu je dovoljan." (Kur\'an, 65:3)',
-    /* 16 */ '"Najboljim se smatrajte prema ženama." (Buhari, Muslim)',
-    /* 17 */ '"Allahu nije drag onaj ko ne voli bližnje." (Buhari, Muslim)',
-    /* 18 */ '"Ko klanja akšam – zaštićen je Allahovim zaštitom te noći." (Taberani)',
-    /* 19 */ '"Dova je suština ibadeta." (Tirmizi)',
-    /* 20 */ '"Allahu moj, uljepšaj mi moj moral kao što si mi uljepšao izgled." (Ahmed)',
-    /* 21 */ '"Ko prouči Ajetu-l-kursijju poslije farz-namaza, između njega i dženneta stoji samo smrt." (Nesai)',
-    /* 22 */ '"Subhanallahi ve bihamdihi – sto puta dnevno briše grijehe makar ih bilo koliko morske pjene." (Buhari, Muslim)',
-    /* 23 */ '"Allahov Poslanik, s.a.v.s., klanjao je noćni namaz sve dok mu noge nisu otekle." (Buhari)',
+            "Najbolji od vas su oni koji su najbolji prema svojim ženama. A ja sam među vama najbolji prema svojoj ženi.",
+            "Ko isposti ramazan i posti još šest dana u ševvalu, kao da je postio cijelo vrijeme.",
+            "Namaz je stub vjere. Onaj ko napusti namaz srušio je svoju vjeru.",
+            "Allah zaista voli one koji se često kaju, i voli one koji se mnogo čiste. (Al-Baqara, 222.)",
+            "Roditeljima onog ko uči Kur'an i po njemu postupa na Sudnjem danu bit će stavljena kruna, svijetlija od sunca i bit će odjeveni u odjeću kakve nema na dunjaluku.",
+            "Allahu, Ti si Mir i Ti ga daješ, blagodaran si Ti, Posjedovatelju veličine i plemenitosti. (Muslim)",
+            "Dva rekata sabahskog sunneta bolja su od dunjaluka i svega što je na njemu. (Muslim)",
+            "Neće musliman posaditi sadnicu, ili posijati usjev, a da ono što od toga pojede čovjek ili životinja ne bude njemu sadaka. (Muttefekun alejhi)",
+            "Reci: 'Gospodaru moj, povećaj mi znanje!' (Kuran, 20:114)",
+            "Nemojte jedni drugima zavidjeti, nemojte jedni druge varati, nemojte jedni druge mrziti, nemojte jedni drugima leđa okretati — budite Allahovi robovi braća!",
+            "Allahu moj, pomozi mi da Te se sjećam, da Ti zahvaljujem i da Ti lijepo ibadet činim!",
+            "Ne vjeruje jedan od vas, sve dok ne bude želio svome bratu ono što želi i sebi.",
+            "I u Allaha se pouzdaj, Allah je zaštitnik dovoljan! (Kur'an, 65:3)",
+            "O vi koji vjerujete, sebe i porodice svoje čuvajte od vatre... (At-Tahrim: 6)",
+            "Ko klanja sabah i ikindiju ući će u Džennet. (Buhari 574. i Muslim 635.)",
+            "Allahu, kao što si uljepšao moje stvaranje, uljepšaj i moj moral.",
+            "Ko prouči Ajetul-kursijju nakon svakog propisanog namaza, samo ga smrt dijeli od ulaska u Džennet.",
+            "I obavljaj molitvu početkom i krajem dana, i u prvim časovima noći! Dobra djela zaista poništavaju rđava. (Hud, 114.)",
+            "Ko u toku dana kaže sto puta subhanallahi ve bi hamdihi, bit će mu oprošteni grijesi, pa makar ih bilo koliko morske pjene.",
+            "Ko obavi hadž Allaha radi, i pri tome se bude čuvao ružnog govora i loših djela, vratit će se čist od grijeha kao na dan kada ga je majka rodila.",
+            "Ko se pokaje prije nego što Sunce izađe sa zapada, On će mu primiti tevbu. (Muslim, br. 2703)",
+            "Čovjek je vjere svog prijatelja, pa neka čovjek gleda s kim će se družiti.",
+            "Prvo za što će biti pitan rob na sudnjem danu jeste namaz; pa ako namaz bude dobar bit će i ostala djela.",
+            "...onome koji se u Allaha uzda, On mu je dosta. Allah će, zaista, ispuniti ono što je odlučio. (Kur'an 65:3)",
+            "...a milost Moja obuhvaća sve; daću je onima koji se budu grijeha klonili i zekat davali. (Kur'an 7:156)",
+            "Allah nikoga ne opterećuje preko mogućnosti njegovih. (Kur'an 2:286)",
+            "Ta, zaista, s mukom je i last, zaista, s mukom je i last! (Kur'an 94:5-6)",
+            "Allah, zaista, voli one koji dobra djela čine. (Kuran 2:195)",
+            "Reci: 'O robovi moji koji ste se prema sebi ogriješili, ne gubite nadu u Allahovu milost! Allah će, sigurno, sve grijehe oprostiti.' (Kuran 39:53)",
+            "Ti sa svakim — lijepo! I traži da se čine dobra djela, a neznalica se kloni! (El-A'raf, 199.)",
+            "Ne volite nešto, a ono može biti dobro za vas; nešto volite, a ono ispadne zlo po vas. Allah zna, a vi ne znate. (El Bekare, 216.)",
+            "A kada te robovi Moji za Mene upitaju — Ja sam sigurno blizu, odazivam se molbi molitelja kad Me zamoli. (El-Bekara, 186)",
+            "O robovi Moji koji ste se prema sebi ogriješili, ne gubite nadu u Allahovu milost! Allah će, sigurno, sve grijehe oprostiti. (Ez-Zumer, 53)",
+            "Gospodaru moj, podari mi znanje, i uvrsti me među one koji su dobri, i učini me jednim od onih kojima ćeš džennetske blagodati darovati. (Eš-Šu'ara, 83-85)",
+            "Reci: Dogodiće nam se samo ono što nam Allah odredi, On je Gospodar naš. I neka se vjernici samo u Allaha pouzdaju! (Et-Tewba, 51)",
+            "A oni koji budu vjerovali i dobra djela činili — oni će stanovnici Dženneta biti i u njemu će vječno boraviti. (Al Bekare, 82)",
+            "Sjećajte se vi Mene, i Ja ću se vas sjetiti, i zahvaljujte Mi, i na blagodatima Mojim nezahvalni nemojte biti. (El-Bekara, 152)",
+            "Pustio je dva mora da se dodiruju, između njih je pregrada i ona se ne miješaju — pa, koju blagodat Gospodara svoga poričete?! (Er-Rahman, 19-21.)",
+            "Dobro i zlo nisu isto! Zlo dobrim uzvrati, pa će ti dušmanin tvoj odjednom prisni prijatelj postati. (Fussilet, 34.)",
+            "Sve što je na Zemlji prolazno je, ostaje samo Gospodar tvoj, Veličanstveni i Plemeniti. (Er-Rahman, 26-28)",
+            "I nikako za bilo šta ne reci: 'Uradit ću to sigurno sutra!' — ne dodavši: 'Ako Bog da!' (El-Kehf, 24.)",
+            "U stvaranju nebesa i zemlje i u izmjeni noći i dana su, zaista, znamenja za razumom obdarene. (Ali-Imran 190-191)",
+            "Molite se ponizno i u sebi Gospodaru svome, ne voli On one koji se glasno mole. (El-Araf 55)",
+            "O, vjernici često Allaha spominjite i hvalite, i ujutro i naveče Ga veličajte. (El-Ahzab 41-42)",
+            "Najviše ljudi koji će ući u džennet bit će zbog bogobojaznosti i lijepog ahlaka.",
+            "Meni najbliži od vas bit će oni koji imaju najljepši ahlak, koji su skrušeni i koji mire i zbližavaju. (Tirmizi)",
+            "Ko sakrije sramotu svoga brata na dunjaluku, Allah će sakriti njegovu i na dunjaluku i na ahiretu. (Buharija i Muslim)",
+            "Ko napusti raspravu kad nije u pravu, bude mu napravljena kuća u džennetskoj mahali. (Ibn Madže i Tirmizi)",
+            "Musliman je muslimanu brat: ne nanosi mu nepravdu, ne uskraćuje mu njegova prava i ne ponižava ga. (Muslim)",
         ];
 
         // ── PRAYER NAMES ──────────────────────────────────────────────────────────
@@ -505,16 +530,78 @@
         const NO_NAMAZ = new Set(["Zora", "Izlazak sunca"]);
         const getDisplayName = n => NO_NAMAZ.has(n) ? n.toUpperCase() : n.toUpperCase() + " - NAMAZ";
 
+        // ── HIJRI HELPERS ─────────────────────────────────────────────────────────
+        // Returns the current Hijri month (1 = Muharrem … 9 = Ramazan … 12 = Zul-hidždže)
+        function getHijriMonth() {
+            try {
+                const parts = new Intl.DateTimeFormat('en-u-ca-islamic', {
+                    month: 'numeric'
+                }).formatToParts(new Date());
+                const mp = parts.find(x => x.type === 'month');
+                return mp ? parseInt(mp.value) : null;
+            } catch (e) { return null; }
+        }
+
+        function isRamazan() {
+            return getHijriMonth() === 9;
+        }
+
+        // ── DYNAMIC NAME / TIME RESOLVERS ─────────────────────────────────────────
+        // Index 3 = Podne → Džuma on Fridays
+        // Index 6 = Jacija → Teravija during Ramazan (time = Akšam + 2h, rounded to full hour)
+
+        function getPrayerName(i) {
+            const dow = new Date().getDay(); // 0 Sun … 5 Fri … 6 Sat
+            if (i === 3 && dow === 5) return "Džuma";
+            if (i === 6 && isRamazan()) return "Teravija";
+            return names[i];
+        }
+
+        function getPrayerArabic(i) {
+            // Teravija doesn't have a standard Arabic name slot — reuse العشاء style
+            // Džuma in Arabic: الجمعة
+            const dow = new Date().getDay();
+            if (i === 3 && dow === 5) return "الجمعة";
+            if (i === 6 && isRamazan()) return "تراويح";
+            return arabic[i];
+        }
+
+        // Round a "HH:MM" time string to the nearest full hour
+        function roundToFullHour(timeStr) {
+            const [h, m] = timeStr.split(':').map(Number);
+            const rounded = m >= 30 ? (h + 1) % 24 : h;
+            return String(rounded).padStart(2, '0') + ':00';
+        }
+
+        // Add N hours to a "HH:MM" string, returns "HH:MM"
+        function addHours(timeStr, hours) {
+            const [h, m] = timeStr.split(':').map(Number);
+            const total = (h + hours) % 24;
+            return String(total).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+        }
+
+        // Returns the effective time for prayer index i given the base vakatTimes array
+        function getPrayerTime(i, times) {
+            const dow = new Date().getDay();
+
+            // Džuma: Podne time rounded to nearest full hour
+            if (i === 3 && dow === 5 && times[3]) {
+                return roundToFullHour(times[3]);
+            }
+
+            // Teravija: Akšam (index 5) + 2 hours, then round to nearest full hour
+            if (i === 6 && isRamazan() && times[5]) {
+                return roundToFullHour(addHours(times[5], 2));
+            }
+
+            return times[i];
+        }
+
         const CACHE_KEY = 'vaktija_cache';
         let vakatTimes = [];
         let izlazakRaw = '';
 
         // ── SABAH CALCULATION ─────────────────────────────────────────────────────
-        // Only izlazak time is needed. Logic:
-        //   - No previous sabah in localStorage → first run →
-        //     sabah = nearest 15-min mark ~37 min before izlazak (e.g. 05:37 → 05:00)
-        //   - Each subsequent day → if (izlazak - prevSabah) is 30–45 min → keep prevSabah
-        //                           else → sabah = ceil((izlazak - 45) / 15) * 15
         const SABAH_KEY = 'vaktija_sabah';
 
         function computeSabah(izlazakStr) {
@@ -524,7 +611,6 @@
 
             const stored = localStorage.getItem(SABAH_KEY);
             if (!stored) {
-                // First run — nearest 15-min slot ~37 min before izlazak
                 const sab = Math.round((iz - 37) / 15) * 15;
                 const result = toT(sab);
                 localStorage.setItem(SABAH_KEY, result);
@@ -534,9 +620,8 @@
             const prevSab = toM(stored);
             const diff = iz - prevSab;
             if (diff >= 30 && diff <= 45) {
-                return stored; // still in window, keep unchanged
+                return stored;
             }
-            // Outside 30–45 window — recalculate; ceil so we never overshoot away from izlazak
             const sab = Math.ceil((iz - 45) / 15) * 15;
             const result = toT(sab);
             localStorage.setItem(SABAH_KEY, result);
@@ -544,8 +629,6 @@
         }
 
         // ── DATA FETCH ────────────────────────────────────────────────────────────
-        // Hardcoded fallback — approximate times for this location.
-        // Used only when API fails AND localStorage is empty.
         const FALLBACK_TIMES = ["04:04", "05:00", "05:37", "11:54", "15:22", "18:11", "19:45"];
         const FALLBACK_IZLAZAK = "05:37";
 
@@ -567,14 +650,12 @@
                     const [h, m] = t.split(':');
                     return h.padStart(2, '0') + ':' + (m || '00').padStart(2, '0');
                 });
-                // Clear any pending retry
                 if (fetchRetryTimer) { clearTimeout(fetchRetryTimer); fetchRetryTimer = null; }
                 if (data.lokacija)
                     document.getElementById('medžlis-line').innerText = 'Medžlis Islamske zajednice ' + data.lokacija;
                 applyTimes(api[0], api[1], api[2], api[3], api[4], api[5]);
                 localStorage.setItem(CACHE_KEY, JSON.stringify({ date: new Date().toDateString(), times: vakatTimes, izlazak: izlazakRaw }));
             } catch (e) {
-                // API failed — try localStorage cache first
                 let loaded = false;
                 try {
                     const c = JSON.parse(localStorage.getItem(CACHE_KEY));
@@ -584,7 +665,6 @@
                     }
                 } catch (e2) { }
 
-                // Nothing in cache — use hardcoded fallback so panel is never blank
                 if (!loaded) {
                     applyTimes(
                         FALLBACK_TIMES[0], FALLBACK_IZLAZAK,
@@ -593,7 +673,6 @@
                     );
                 }
 
-                // Retry API every 2 minutes until it succeeds
                 if (!fetchRetryTimer) {
                     fetchRetryTimer = setTimeout(function retry() {
                         fetchRetryTimer = null;
@@ -605,20 +684,25 @@
 
         function render() {
             if (!vakatTimes.length) return;
-            const now = new Date(); let ai = -1;
-            vakatTimes.forEach((t, i) => {
+            const now = new Date();
+            let ai = -1;
+
+            // Build effective times (with Džuma/Teravija overrides applied)
+            const effectiveTimes = vakatTimes.map((t, i) => getPrayerTime(i, vakatTimes));
+
+            effectiveTimes.forEach((t, i) => {
                 const [h, m] = t.split(':'), d = new Date();
                 d.setHours(+h, +m, 0);
                 if (now >= d) ai = i;
             });
-            // Before Zora (midnight → Zora): highlight last prayer (Jacija) from previous day
             if (ai === -1) ai = vakatTimes.length - 1;
-            document.getElementById('prayers').innerHTML = vakatTimes.map((t, i) => `
+
+            document.getElementById('prayers').innerHTML = effectiveTimes.map((t, i) => `
         <div class="row ${i === ai ? 'active' : ''}">
             <div class="dot"></div>
-            <div class="name">${names[i]}</div>
+            <div class="name">${getPrayerName(i)}</div>
             <div class="time">${t}</div>
-            <div class="ar">${arabic[i]}</div>
+            <div class="ar">${getPrayerArabic(i)}</div>
         </div>`).join('');
         }
 
@@ -667,8 +751,12 @@
 
         function updateIkamet() {
             const now = new Date();
-            for (let i = 0; i < vakatTimes.length; i++) {
-                const [h, m] = vakatTimes[i].split(':'), d = new Date();
+
+            // Build effective times array for countdown logic
+            const effectiveTimes = vakatTimes.map((t, i) => getPrayerTime(i, vakatTimes));
+
+            for (let i = 0; i < effectiveTimes.length; i++) {
+                const [h, m] = effectiveTimes[i].split(':'), d = new Date();
                 d.setHours(+h, +m, 0, 0);
                 if (d > now) {
                     const diff = d - now;
@@ -676,15 +764,16 @@
                     const mn = Math.floor((diff % 3600000) / 60000);
                     const sc = Math.floor((diff % 60000) / 1000);
                     document.getElementById('ikamet').innerText = `${String(hr).padStart(2, '0')}:${String(mn).padStart(2, '0')}:${String(sc).padStart(2, '0')}`;
-                    document.getElementById('next-latin').innerText = getDisplayName(names[i]);
+                    document.getElementById('next-latin').innerText = getDisplayName(getPrayerName(i));
                     document.getElementById('next-sep').innerText = '|';
-                    document.getElementById('next-arabic').innerText = arabic[i];
+                    document.getElementById('next-arabic').innerText = getPrayerArabic(i);
                     return;
                 }
             }
+
             // After last prayer — count down to tomorrow's Zora
             if (vakatTimes.length > 0) {
-                const [zh, zm] = vakatTimes[0].split(':'), t = new Date();
+                const [zh, zm] = effectiveTimes[0].split(':'), t = new Date();
                 t.setDate(t.getDate() + 1); t.setHours(+zh, +zm, 0, 0);
                 const diff = t - now;
                 const hr = Math.floor(diff / 3600000);
@@ -698,42 +787,29 @@
         }
 
         // ── FOOTER ────────────────────────────────────────────────────────────────
-        let curFooterHour = -1;
+        // Cycles through all 50 entries sequentially, one every 10 seconds
+        let footerIndex = 0;
         function updateFooter() {
-            const h = new Date().getHours();
-            if (h === curFooterHour) return;
-            curFooterHour = h;
+            footerIndex = (footerIndex + 1) % FOOTER_TEXTS.length;
             const el = document.getElementById('footer-text');
             el.classList.add('fade-out');
-            setTimeout(() => { el.innerText = FOOTER_TEXTS[h % FOOTER_TEXTS.length]; el.classList.remove('fade-out'); }, 850);
+            setTimeout(() => { el.innerText = FOOTER_TEXTS[footerIndex]; el.classList.remove('fade-out'); }, 850);
         }
 
         // ── INIT ──────────────────────────────────────────────────────────────────
         (() => {
-            const h = new Date().getHours();
-            document.getElementById('footer-text').innerText = FOOTER_TEXTS[h % FOOTER_TEXTS.length];
-            curFooterHour = h;
+            // Start at a random entry so it doesn't always begin from #1 on page load
+            footerIndex = Math.floor(Math.random() * FOOTER_TEXTS.length);
+            document.getElementById('footer-text').innerText = FOOTER_TEXTS[footerIndex];
         })();
 
-        // One-time migration: clear any stale sabah from old cache
+        // One-time migration: clear stale sabah
         (() => {
-            const c = localStorage.getItem('vaktija_cache');
-            if (c) {
-                try {
-                    const parsed = JSON.parse(c);
-                    // If cache has a times[1] that was computed by old logic, wipe sabah key
-                    // so computeSabah recalculates fresh on next fetchVakat
-                    if (!localStorage.getItem(SABAH_KEY)) {
-                        // nothing to migrate
-                    }
-                } catch (e) { }
-            }
-            // Force clear bad cached sabah value — remove this block after one deploy
             localStorage.removeItem(SABAH_KEY);
         })();
 
         setInterval(updateClock, 1000);
-        setInterval(updateFooter, 10000);
+        setInterval(updateFooter, 120000);
         updateClock();
         fetchVakat();
 
@@ -742,7 +818,7 @@
         const _ms = new Date(_n.getFullYear(), _n.getMonth(), _n.getDate() + 1) - _n;
         setTimeout(() => { fetchVakat(); setInterval(fetchVakat, 86400000); }, _ms);
 
-        // Pixel-shift anti-burn-in (CSS handles the main animation; this is a fallback)
+        // Pixel-shift anti-burn-in
         setInterval(() => {
             document.body.style.transform = "translate(" + Math.random() + "px," + Math.random() + "px)";
         }, 15000);
