@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="3600">
     <title>TV Vaktija</title>
     <link rel="icon" type="image/svg+xml" href="vaktijaFavicon.svg">
     <link
@@ -825,6 +826,17 @@
         setInterval(() => {
             document.body.style.transform = "translate(" + Math.random() + "px," + Math.random() + "px)";
         }, 15000);
+
+
+        let lastTick = Date.now();
+
+        setInterval(() => {
+            const now = Date.now();
+            if (now - lastTick > 30000) {
+                location.reload();
+            }
+            lastTick = now;
+        }, 2000);
     </script>
 </body>
 
