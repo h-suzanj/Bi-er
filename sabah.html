@@ -5,7 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sabah – podešavanje</title>
-    <link rel="icon" type="image/svg+xml" href="vaktijaFavicon.svg">
+    <link rel="icon" type="image/png" href="icon-192.png">
+    <link rel="manifest" href="sabah.webmanifest">
+    <meta name="theme-color" content="#1e7f4f">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Sabah">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -89,6 +96,10 @@
         #msg.ok { color: var(--green); }
         #msg.err { color: var(--err); }
 
+        #install { display: none; }
+        #install .btn { margin-top: 0; }
+        #install p { font-size: 14px; color: var(--muted); line-height: 1.5; }
+
         details summary { cursor: pointer; font-size: 14px; font-weight: 700; color: var(--muted); }
         details p { font-size: 13px; color: var(--muted); margin: 8px 0; line-height: 1.5; }
         details a { color: var(--green); }
@@ -101,6 +112,11 @@
             <h1>SABAH – PODEŠAVANJE</h1>
             <p>Džemat Bičer - Ž. Stanica</p>
         </header>
+
+        <section class="card" id="install">
+            <button class="btn" id="install-btn" style="display:none">Instaliraj aplikaciju na telefon</button>
+            <p id="install-ios" style="display:none">Za instalaciju na iPhone: dodirnite <b>Podijeli</b> (kvadrat sa strelicom) → <b>Dodaj na početni ekran</b>.</p>
+        </section>
 
         <section class="card">
             <h2>Trenutno na TV-u</h2>
@@ -286,6 +302,25 @@
             } catch (e) { msg(e.message, 'err'); }
             $('reset').disabled = false;
         });
+
+        // ── App install (PWA) ──
+        if ('serviceWorker' in navigator) navigator.serviceWorker.register('sabah-sw.js').catch(() => { });
+        const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+        let installEvt = null;
+        window.addEventListener('beforeinstallprompt', e => {
+            e.preventDefault(); installEvt = e;
+            if (!standalone) { $('install').style.display = 'block'; $('install-btn').style.display = 'block'; }
+        });
+        $('install-btn').addEventListener('click', async () => {
+            if (!installEvt) return;
+            installEvt.prompt();
+            await installEvt.userChoice;
+            installEvt = null; $('install').style.display = 'none';
+        });
+        window.addEventListener('appinstalled', () => { $('install').style.display = 'none'; });
+        if (!standalone && /iphone|ipad|ipod/i.test(navigator.userAgent)) {
+            $('install').style.display = 'block'; $('install-ios').style.display = 'block';
+        }
 
         (async () => {
             await loadVaktija();
