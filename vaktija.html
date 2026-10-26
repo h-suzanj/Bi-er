@@ -636,10 +636,59 @@
         const FALLBACK_TIMES = ["04:04", "05:00", "05:37", "11:54", "15:22", "18:11", "19:45"];
         const FALLBACK_IZLAZAK = "05:37";
 
+        // ── MANUAL SABAH (sabah.json in repo, edited via sabah.html) ─────────────
+        // Manual time is used only if: format OK, today <= "until", and it lies
+        // between Zora and 10 min before Izlazak. Otherwise → automatic fallback.
+        const MANUAL_API = 'https://api.github.com/repos/h-suzanj/Bi-er/contents/sabah.json?ref=main';
+        const MANUAL_RAW = 'https://raw.githubusercontent.com/h-suzanj/Bi-er/main/sabah.json';
+        const MANUAL_KEY = 'vaktija_sabah_manual';
+        let manualSabah = null;
+        try { manualSabah = JSON.parse(localStorage.getItem(MANUAL_KEY)); } catch (e) { }
+
+        function todayISO() {
+            const d = new Date(), p = n => String(n).padStart(2, '0');
+            return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+        }
+
+        function getManualSabah(zora, izlazak) {
+            const m = manualSabah;
+            if (!m || typeof m.time !== 'string' || !/^\d{2}:\d{2}$/.test(m.time)) return null;
+            if (!m.until || todayISO() > m.until) return null;
+            const toM = s => { const [h, mm] = s.split(':'); return +h * 60 + (+mm); };
+            const t = toM(m.time);
+            if (zora && t < toM(zora)) return null;
+            if (izlazak && t > toM(izlazak) - 10) return null;
+            return m.time;
+        }
+
+        function resolveSabah() {
+            if (!izlazakRaw) return null;
+            return getManualSabah(vakatTimes[0], izlazakRaw) || computeSabah(izlazakRaw);
+        }
+
+        async function fetchManualSabah() {
+            let data = null;
+            try {
+                const r = await fetch(MANUAL_API, { headers: { Accept: 'application/vnd.github.raw+json' }, cache: 'no-store' });
+                if (r.ok) data = await r.json();
+            } catch (e) { }
+            if (!data) {
+                try {
+                    const r = await fetch(MANUAL_RAW + '?t=' + Date.now(), { cache: 'no-store' });
+                    if (r.ok) data = await r.json();
+                } catch (e) { }
+            }
+            if (data) {
+                manualSabah = data;
+                try { localStorage.setItem(MANUAL_KEY, JSON.stringify(data)); } catch (e) { }
+            }
+            if (vakatTimes.length) { vakatTimes[1] = resolveSabah(); render(); }
+        }
+
         function applyTimes(zora, izlazak, podne, ikindija, aksam, jacija) {
             izlazakRaw = izlazak;
-            const sabah = computeSabah(izlazakRaw);
-            vakatTimes = [zora, sabah, izlazak, podne, ikindija, aksam, jacija];
+            vakatTimes = [zora, null, izlazak, podne, ikindija, aksam, jacija];
+            vakatTimes[1] = resolveSabah();
             render();
         }
 
@@ -816,6 +865,8 @@
         setInterval(updateFooter, 120000);
         updateClock();
         fetchVakat();
+        fetchManualSabah();
+        setInterval(fetchManualSabah, 10 * 60 * 1000);
 
         // Refresh prayer times at midnight
         const _n = new Date();

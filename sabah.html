@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="bs">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sabah – podešavanje</title>
+    <link rel="icon" type="image/svg+xml" href="vaktijaFavicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --green: #1e7f4f;
+            --green-soft: #e8f5ee;
+            --gold: #b8860b;
+            --text: #1a1a1a;
+            --muted: #666;
+            --line: #e0e0e0;
+            --card: #fff;
+            --bg: #f4f4f1;
+            --err: #b3261e;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px 16px 40px;
+        }
+
+        main { max-width: 440px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+
+        header { text-align: center; }
+        header h1 { font-size: 22px; font-weight: 900; color: var(--green); letter-spacing: .04em; }
+        header p { font-size: 14px; color: var(--gold); font-style: italic; font-weight: 700; }
+
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 18px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, .08);
+        }
+
+        .card h2 {
+            font-size: 13px; text-transform: uppercase; letter-spacing: .12em;
+            color: var(--muted); margin-bottom: 10px;
+        }
+
+        .status { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+        .status .big { font-size: 40px; font-weight: 900; font-variant-numeric: tabular-nums; color: var(--green); line-height: 1.1; }
+        .badge {
+            font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 99px;
+            background: var(--green-soft); color: var(--green); white-space: nowrap;
+        }
+        .badge.auto { background: #f1ecdf; color: var(--gold); }
+        .sub { font-size: 14px; color: var(--muted); margin-top: 6px; }
+
+        .refs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
+        .refs div { background: var(--bg); border-radius: 8px; padding: 8px 4px; }
+        .refs b { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
+        .refs span { font-size: 12px; color: var(--muted); }
+
+        label { display: block; font-size: 14px; font-weight: 700; margin: 12px 0 4px; }
+        label:first-of-type { margin-top: 0; }
+        input {
+            width: 100%; font: inherit; font-size: 20px; padding: 10px 12px;
+            border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--text);
+        }
+        input[type=password] { font-size: 15px; }
+        input:focus { outline: 2px solid var(--green); border-color: transparent; }
+
+        .quick { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+        .quick button {
+            flex: 1; font: inherit; font-size: 14px; font-weight: 700; padding: 6px 0;
+            border: 1px solid var(--line); background: #fff; border-radius: 8px; color: var(--text); cursor: pointer;
+        }
+
+        .btn {
+            width: 100%; font: inherit; font-size: 17px; font-weight: 700; padding: 13px;
+            border: none; border-radius: 10px; cursor: pointer; margin-top: 16px;
+            background: var(--green); color: #fff;
+        }
+        .btn.secondary { background: transparent; color: var(--gold); border: 1.5px solid var(--gold); margin-top: 10px; }
+        .btn:disabled { opacity: .5; cursor: default; }
+
+        #msg { font-size: 15px; font-weight: 700; text-align: center; min-height: 22px; }
+        #msg.ok { color: var(--green); }
+        #msg.err { color: var(--err); }
+
+        details summary { cursor: pointer; font-size: 14px; font-weight: 700; color: var(--muted); }
+        details p { font-size: 13px; color: var(--muted); margin: 8px 0; line-height: 1.5; }
+        details a { color: var(--green); }
+    </style>
+</head>
+
+<body>
+    <main>
+        <header>
+            <h1>SABAH – PODEŠAVANJE</h1>
+            <p>Džemat Bičer - Ž. Stanica</p>
+        </header>
+
+        <section class="card">
+            <h2>Trenutno na TV-u</h2>
+            <div class="status">
+                <div class="big" id="cur-time">--:--</div>
+                <div class="badge" id="cur-badge">…</div>
+            </div>
+            <div class="sub" id="cur-sub"></div>
+        </section>
+
+        <section class="card">
+            <h2>Danas (vaktija.ba)</h2>
+            <div class="refs">
+                <div><b id="r-zora">--:--</b><span>Zora</span></div>
+                <div><b id="r-auto">--:--</b><span>Sabah (auto)</span></div>
+                <div><b id="r-izlazak">--:--</b><span>Izlazak</span></div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>Ručno postavi</h2>
+            <label for="in-time">Vrijeme sabaha</label>
+            <input type="time" id="in-time" step="60">
+
+            <label for="in-until">Važi do (uključujući)</label>
+            <input type="date" id="in-until">
+            <div class="quick">
+                <button data-days="0">Danas</button>
+                <button data-days="6">7 dana</button>
+                <button data-days="13">14 dana</button>
+                <button data-days="29">30 dana</button>
+            </div>
+
+            <button class="btn" id="save">Spremi</button>
+            <button class="btn secondary" id="reset">Vrati na automatski</button>
+        </section>
+
+        <div id="msg"></div>
+
+        <section class="card">
+            <details id="tok-box">
+                <summary>GitHub ključ (token)</summary>
+                <p>Ključ se čuva samo u ovom pregledniku. Napravite ga na
+                    <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com → Fine-grained token</a>:
+                    Repository access → samo <b>Bi-er</b>, Permissions → <b>Contents: Read and write</b>.</p>
+                <input type="password" id="in-token" placeholder="github_pat_…" autocomplete="off">
+            </details>
+        </section>
+    </main>
+
+    <script>
+        const OWNER = 'h-suzanj', REPO = 'Bi-er', PATH = 'sabah.json', BRANCH = 'main';
+        const API = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
+        const TOKEN_KEY = 'sabah_admin_token';
+
+        const $ = id => document.getElementById(id);
+        const p2 = n => String(n).padStart(2, '0');
+        const toM = s => { const [h, m] = s.split(':'); return +h * 60 + (+m); };
+        const toT = m => p2(Math.floor(m / 60)) + ':' + p2(m % 60);
+        const iso = d => d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());
+        const todayISO = () => iso(new Date());
+        const fmtDate = s => { const [y, m, d] = s.split('-'); return `${+d}.${+m}.${y}.`; };
+
+        let zora = null, izlazak = null, autoSabah = null, current = null;
+
+        function msg(text, kind) { const el = $('msg'); el.textContent = text; el.className = kind || ''; }
+
+        // Token
+        try { $('in-token').value = localStorage.getItem(TOKEN_KEY) || ''; } catch (e) { }
+        if (!$('in-token').value) $('tok-box').open = true;
+        $('in-token').addEventListener('change', () => {
+            try { localStorage.setItem(TOKEN_KEY, $('in-token').value.trim()); } catch (e) { }
+        });
+        const token = () => $('in-token').value.trim();
+
+        // Quick "until" buttons
+        document.querySelectorAll('.quick button').forEach(b => b.addEventListener('click', () => {
+            const d = new Date(); d.setDate(d.getDate() + +b.dataset.days); $('in-until').value = iso(d);
+        }));
+        { const d = new Date(); d.setDate(d.getDate() + 6); $('in-until').value = iso(d); }
+
+        // Same validity rule as the TV
+        function manualValid(m) {
+            if (!m || typeof m.time !== 'string' || !/^\d{2}:\d{2}$/.test(m.time)) return false;
+            if (!m.until || todayISO() > m.until) return false;
+            const t = toM(m.time);
+            if (zora && t < toM(zora)) return false;
+            if (izlazak && t > toM(izlazak) - 10) return false;
+            return true;
+        }
+
+        function renderStatus() {
+            if (current && manualValid(current)) {
+                $('cur-time').textContent = current.time;
+                $('cur-badge').textContent = 'RUČNO'; $('cur-badge').className = 'badge';
+                $('cur-sub').textContent = 'Važi do ' + fmtDate(current.until) + ' — nakon toga automatski.';
+            } else {
+                $('cur-time').textContent = autoSabah || '--:--';
+                $('cur-badge').textContent = 'AUTOMATSKI'; $('cur-badge').className = 'badge auto';
+                $('cur-sub').textContent = current && current.time
+                    ? 'Ručno vrijeme ' + current.time + (current.until ? ' (do ' + fmtDate(current.until) + ')' : '') + ' se više ne primjenjuje.'
+                    : 'Nema ručno postavljenog vremena.';
+            }
+        }
+
+        async function loadVaktija() {
+            try {
+                const r = await fetch('https://api.vaktija.ba/vaktija/v1/44');
+                const d = await r.json();
+                const t = d.vakat.map(s => { const [h, m] = s.split(':'); return p2(+h) + ':' + p2(+(m || 0)); });
+                zora = t[0]; izlazak = t[1]; // API: [zora, izlazak, podne, ikindija, aksam, jacija]
+                autoSabah = toT(Math.round((toM(izlazak) - 37) / 15) * 15);
+                $('r-zora').textContent = zora; $('r-izlazak').textContent = izlazak; $('r-auto').textContent = autoSabah;
+                if (!$('in-time').value) $('in-time').value = autoSabah;
+            } catch (e) { msg('Ne mogu učitati vaktiju sa vaktija.ba.', 'err'); }
+        }
+
+        async function loadCurrent() {
+            try {
+                const r = await fetch(API + '?ref=' + BRANCH, {
+                    headers: { Accept: 'application/vnd.github.raw+json' }, cache: 'no-store'
+                });
+                if (r.ok) current = await r.json();
+            } catch (e) { }
+            if (current && current.time && manualValid(current)) {
+                $('in-time').value = current.time; $('in-until').value = current.until;
+            }
+        }
+
+        async function writeFile(obj, commitMsg) {
+            if (!token()) { $('tok-box').open = true; throw new Error('Unesite GitHub ključ (token).'); }
+            try { localStorage.setItem(TOKEN_KEY, token()); } catch (e) { }
+            const headers = { Authorization: 'Bearer ' + token(), Accept: 'application/vnd.github+json' };
+
+            const g = await fetch(API + '?ref=' + BRANCH, { headers, cache: 'no-store' });
+            if (g.status === 401) throw new Error('Ključ (token) nije ispravan ili je istekao.');
+            let sha;
+            if (g.ok) sha = (await g.json()).sha;
+            else if (g.status !== 404) throw new Error('GitHub greška ' + g.status);
+
+            const body = {
+                message: commitMsg,
+                content: btoa(unescape(encodeURIComponent(JSON.stringify(obj, null, 2) + '\n'))),
+                branch: BRANCH
+            };
+            if (sha) body.sha = sha;
+            const r = await fetch(API, { method: 'PUT', headers, body: JSON.stringify(body) });
+            if (r.status === 401 || r.status === 403) throw new Error('Ključ nema dozvolu za pisanje (Contents: Read and write).');
+            if (!r.ok) throw new Error('GitHub greška ' + r.status);
+            current = obj;
+            renderStatus();
+        }
+
+        $('save').addEventListener('click', async () => {
+            const time = $('in-time').value, until = $('in-until').value;
+            if (!/^\d{2}:\d{2}$/.test(time)) return msg('Unesite vrijeme sabaha.', 'err');
+            if (!until) return msg('Unesite datum do kada važi.', 'err');
+            if (until < todayISO()) return msg('Datum ne može biti u prošlosti.', 'err');
+            if (zora && toM(time) < toM(zora)) return msg('Sabah ne može biti prije zore (' + zora + ').', 'err');
+            if (izlazak && toM(time) > toM(izlazak) - 10) return msg('Sabah mora biti najmanje 10 min prije izlaska sunca (' + izlazak + ').', 'err');
+
+            $('save').disabled = true; msg('Spremam…');
+            try {
+                await writeFile({ time, until, updated: new Date().toISOString() }, `Sabah ${time} do ${until}`);
+                msg('Spremljeno. TV će preuzeti promjenu u roku od ~10 minuta.', 'ok');
+            } catch (e) { msg(e.message, 'err'); }
+            $('save').disabled = false;
+        });
+
+        $('reset').addEventListener('click', async () => {
+            $('reset').disabled = true; msg('Spremam…');
+            try {
+                await writeFile({ time: null, until: null, updated: new Date().toISOString() }, 'Sabah: automatski');
+                $('in-time').value = autoSabah || '';
+                msg('Vraćeno na automatski.', 'ok');
+            } catch (e) { msg(e.message, 'err'); }
+            $('reset').disabled = false;
+        });
+
+        (async () => {
+            await loadVaktija();
+            await loadCurrent();
+            renderStatus();
+        })();
+    </script>
+</body>
+
+</html>
