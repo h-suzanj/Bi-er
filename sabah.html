@@ -168,7 +168,14 @@
 
         function msg(text, kind) { const el = $('msg'); el.textContent = text; el.className = kind || ''; }
 
-        // Token
+        // Token — can arrive via link: sabah.html#k=github_pat_...  (saved once, then removed from the address bar)
+        {
+            const k = new URLSearchParams(location.hash.slice(1)).get('k');
+            if (k) {
+                try { localStorage.setItem(TOKEN_KEY, k.trim()); } catch (e) { }
+                history.replaceState(null, '', location.pathname);
+            }
+        }
         try { $('in-token').value = localStorage.getItem(TOKEN_KEY) || ''; } catch (e) { }
         if (!$('in-token').value) $('tok-box').open = true;
         $('in-token').addEventListener('change', () => {
